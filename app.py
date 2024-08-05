@@ -22,6 +22,10 @@ class TrackableManagerAgent(GroupChatManager):
     def _process_received_message(self, message, sender, silent):
         if sender.name == up.name:
             st.chat_message("user").markdown(message)
+        elif sender.name == cc.name:
+            st.chat_message("assistant", avatar="🤖").markdown(message)
+        elif sender.name == ev.name:
+            st.chat_message("assistant", avatar="✅").markdown(message)
         else:
             st.chat_message("assistant").markdown(message)
         return super()._process_received_message(message, sender, silent)
@@ -85,6 +89,10 @@ if "messages" not in st.session_state:
 for msg in st.session_state.messages:
     if msg['name'] == up.name:
         st.chat_message("user").markdown(msg["content"])
+    elif msg['name'] == cc.name:
+        st.chat_message("assistant", avatar="🤖").markdown(msg["content"])
+    elif msg['name'] == ev.name:
+        st.chat_message("assistant", avatar="✅").markdown(msg["content"])
     else:
         st.chat_message("assistant").markdown(msg["content"])
 
