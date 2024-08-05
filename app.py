@@ -7,9 +7,9 @@ from agents import user_proxy as up
 from config.template import course_template
 
 # setup page title and description
-st.set_page_config(page_title="SAGE", page_icon="🤖", layout="wide")
+st.set_page_config(page_title="HATTED", page_icon="🤖", layout="wide")
 
-st.markdown("SAGE - Hackathon")
+st.markdown("HATTED - Hackathon")
 
 
 class TrackableManagerAgent(GroupChatManager):
@@ -82,7 +82,7 @@ if "messages" not in st.session_state:
         {
             "role": "assistant",
             "content": course_template,
-            "name": "sage"
+            "name": "hatted"
         }
     ]
 
