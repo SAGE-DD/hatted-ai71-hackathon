@@ -49,14 +49,19 @@ with st.sidebar:
     )
     model = st.selectbox(
         "Choose model",
-        ("tiiuae/falcon-180B-chat", "tiiuae/falcon-40b", "tiiuae/falcon-7b")
+        ("falcon-180B-chat", "falcon-40b", "falcon-7b")
     )
 
+# falcon_dict = {
+#     "falcon-180B-chat": "tiiuae/falcon-180B-chat",
+#     "falcon-40b": "tiiuae/falcon-40b",
+#     "falcon-7b": "tiiuae/falcon-7b"
+# }
 
 llm_config = {
     "config_list": [
         {
-            "model": model,
+            "model": f"tiiuae/{model}",
             "api_key": falcon_api_key,
             "base_url": "https://api.ai71.ai/v1/",
         },
