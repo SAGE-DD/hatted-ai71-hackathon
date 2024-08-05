@@ -72,52 +72,62 @@ if "messages" not in st.session_state:
     st.session_state["messages"] = [
         {
             "role": "assistant",
-            "content": course_template
+            "content": course_template,
+            "name": "sage"
         }
     ]
 
-# for msg in st.session_state.messages:
-#     st.chat_message(msg["role"]).markdown(msg["content"])
+for msg in st.session_state.messages:
+    if msg['name'] == up.name:
+        st.chat_message("user").markdown(msg["content"])
+    else:
+        st.chat_message("assistant").markdown(msg["content"])
+
 
 if prompt := st.chat_input():
 
-    # create a UserProxyAgent instance named "user"
-    # human_input_mode is set to "NEVER" to prevent the agent from asking for user input
-    user_proxy = UserProxyAgent(
-        name=up.name,
-        system_message=up.system_message,
-        human_input_mode="ALWAYS",
-        code_execution_config=False,
-    )
+    if not falcon_api_key:
+        st.warning("Please enter your API Key")
 
-    creator = AssistantAgent(
-        name=cc.name,
-        system_message=cc.system_message,
-        llm_config=llm_config
-    )
+    else:
 
-    evaluator = AssistantAgent(
-        name=ev.name,
-        system_message=ev.system_message,
-        llm_config=llm_config,
-    )
+        # create a UserProxyAgent instance named "user"
+        # human_input_mode is set to "NEVER" to prevent the agent from asking for user input
+        user_proxy = UserProxyAgent(
+            name=up.name,
+            system_message=up.system_message,
+            human_input_mode="ALWAYS",
+            code_execution_config=False,
+        )
 
-    groupchat = GroupChat(
-        agents=[user_proxy, creator, evaluator],
-        messages=st.session_state.messages,
-        max_round=10,
-        speaker_selection_method='round_robin',
-    )
+        creator = AssistantAgent(
+            name=cc.name,
+            system_message=cc.system_message,
+            llm_config=llm_config
+        )
 
-    manager = TrackableManagerAgent(
-        groupchat=groupchat,
-        llm_config=llm_config
-    )
+        evaluator = AssistantAgent(
+            name=ev.name,
+            system_message=ev.system_message,
+            llm_config=llm_config,
+        )
 
-    user_proxy.initiate_chat(
-        manager,
-        message=prompt,
-        clear_history=False
-    )
+        groupchat = GroupChat(
+            agents=[user_proxy, creator, evaluator],
+            messages=st.session_state.messages,
+            max_round=10,
+            speaker_selection_method='round_robin',
+        )
+
+        manager = TrackableManagerAgent(
+            groupchat=groupchat,
+            llm_config=llm_config
+        )
+
+        user_proxy.initiate_chat(
+            manager,
+            message=prompt,
+            clear_history=False
+        )
 
 st.stop()
